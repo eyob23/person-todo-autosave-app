@@ -9,5 +9,5 @@
     "strict": true,
     "types": ["cypress"]
   },
-  "include": ["./**/*.ts"]
+  "include": ["./**/*.ts", "./**/*.d.ts"]
 }

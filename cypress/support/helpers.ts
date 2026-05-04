@@ -20,6 +20,10 @@
  * state leaking between tests.
  */
 
+import type { RequestHandler, WebSocketHandler } from "msw";
+
+type AnyHandler = RequestHandler | WebSocketHandler;
+
 // ── Form navigation ────────────────────────────────────────────────────────
 
 /**
@@ -98,14 +102,6 @@ export function waitForSaved(timeoutMs = 12_000) {
 
 // ── MSW handler overrides ──────────────────────────────────────────────────
 
-type AnyHandler = Parameters<
-  Window["__msw__"] extends { worker: infer W }
-    ? W extends { use: (...h: infer H) => void }
-      ? (...h: H) => void
-      : never
-    : never
->[0];
-
 /**
  * Push one or more MSW request handlers into the running service worker.
  * Injected handlers take precedence over the default mock handlers and stay
@@ -143,18 +139,18 @@ export function resetMswHandlers() {
 // ── Select-field helper ────────────────────────────────────────────────────
 
 /** Select the first non-placeholder option in a <select> element. */
-export function selectFirstOption(
-  selectEl: Cypress.Chainable<JQuery<HTMLElement>>,
+export function selectFirstOption<T extends HTMLElement>(
+  selectEl: Cypress.Chainable<JQuery<T>>,
 ) {
   // Store the select element's value, then select via the <select> directly.
   // Do NOT chain off selectEl after .find() because .find() changes the subject.
   selectEl.then(($select) => {
     const $options = $select.find("option").filter(function () {
-      const v = (this as HTMLOptionElement).value;
+      const v = (this as unknown as HTMLOptionElement).value;
       return v !== "" && v !== undefined;
     });
     if ($options.length > 0) {
-      const firstVal = ($options[0] as HTMLOptionElement).value;
+      const firstVal = ($options[0] as unknown as HTMLOptionElement).value;
       cy.wrap($select).select(firstVal);
     }
   });
