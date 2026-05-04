@@ -1,0 +1,96 @@
+body {
+  background: #f7f7f9;
+}
+
+.required-indicator {
+  font-weight: 700;
+}
+
+.visually-hidden-focusable:focus {
+  position: static !important;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+}
+
+.field-status {
+  margin-top: 0.125rem;
+  line-height: 1.1;
+}
+
+.field-status-transition {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  max-height: 1.25rem;
+  overflow: hidden;
+  transition: opacity 220ms ease, transform 220ms ease, max-height 220ms ease, visibility 0s linear 0s;
+}
+
+.field-status-hidden {
+  opacity: 0;
+  transform: translateY(-2px);
+  visibility: hidden;
+  max-height: 0;
+  margin-top: 0;
+  transition: opacity 220ms ease, transform 220ms ease, max-height 220ms ease, visibility 0s linear 220ms;
+}
+
+.sticky-status {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.card-required-valid {
+  border-top: 4px solid #198754;
+}
+
+.card-required-missing {
+  border-top: 4px solid #dc3545;
+}
+
+.todo-table th,
+.todo-table td {
+  vertical-align: top;
+}
+
+.todo-index-col {
+  width: 3rem;
+}
+
+.todo-actions-col {
+  width: 7rem;
+}
+
+.todo-status-cell {
+  min-width: 8rem;
+}
+
+.todo-row-valid {
+  box-shadow: inset 4px 0 0 #198754;
+}
+
+.todo-row-missing {
+  box-shadow: inset 4px 0 0 #dc3545;
+}
+
+.required-counter-compact {
+  min-width: 18rem;
+}
+
+.required-counter-compact-text {
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.required-counter-compact-progress {
+  height: 1rem;
+}
+
+.required-counter-compact-progress .progress-bar {
+  font-size: 0.8rem;
+  font-weight: 600;
+}

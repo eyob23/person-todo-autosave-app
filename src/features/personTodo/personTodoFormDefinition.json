@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "person": {
+    "fields": [
+      {
+        "key": "personObjectPickId",
+        "label": "Person Object Pick",
+        "tooltip": "Links this person to an existing person object in the system",
+        "type": "select",
+        "required": true,
+        "lookupKey": "personObjects",
+        "placeholder": "Select person object",
+        "columnMd": 4
+      },
+      {
+        "key": "sexId",
+        "label": "Sex",
+        "tooltip": "The biological sex assigned at birth",
+        "type": "select",
+        "required": true,
+        "lookupKey": "sexes",
+        "placeholder": "Select sex",
+        "columnMd": 4
+      },
+      {
+        "key": "genderId",
+        "label": "Gender",
+        "tooltip": "The gender identity of this person",
+        "type": "select",
+        "required": true,
+        "lookupKey": "genders",
+        "placeholder": "Select gender",
+        "columnMd": 4
+      }
+    ]
+  },
+  "todo": {
+    "fields": [
+      {
+        "key": "todoTypeId",
+        "label": "Todo Type",
+        "tooltip": "The category or classification of this todo item",
+        "type": "select",
+        "required": true,
+        "lookupKey": "todoTypes",
+        "placeholder": "Select type"
+      },
+      {
+        "key": "completedCount",
+        "label": "Completed",
+        "tooltip": "Total count of completed todo items",
+        "type": "number",
+        "required": true,
+        "min": 0,
+        "triggersPairValidation": true
+      },
+      {
+        "key": "inProgressCount",
+        "label": "In Progress",
+        "tooltip": "Total count of todo items currently being worked on",
+        "type": "number",
+        "required": true,
+        "min": 0,
+        "triggersPairValidation": true
+      }
+    ]
+  }
+}
