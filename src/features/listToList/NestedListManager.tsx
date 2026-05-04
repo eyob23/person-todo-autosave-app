@@ -41,6 +41,7 @@ import { RequiredCounter } from "./RequiredCounter";
 import type {
   FieldDefinition,
   LookupCollection,
+  LookupOption,
   QueueItem,
   RequiredProgress,
 } from "./types";
@@ -74,6 +75,10 @@ type ListToListManagerProps<
   childFieldDefinitions: FieldDefinition[];
   validationSchema: unknown;
   lookups?: LookupCollection;
+  selectTypeaheadLoaders?: Record<
+    string,
+    (query: string) => Promise<LookupOption[]>
+  >;
   initialParents: TParent[];
   isInitialDataResolved: boolean;
   isLoading: boolean;
@@ -452,6 +457,10 @@ type ListParentCardProps<
   control: Control<any>;
   trigger: UseFormTrigger<any>;
   lookups?: LookupCollection;
+  selectTypeaheadLoaders?: Record<
+    string,
+    (query: string) => Promise<LookupOption[]>
+  >;
   queue: QueueItem[];
   submitAttempted: boolean;
   parentLabel: string;
@@ -498,6 +507,7 @@ function areParentCardPropsEqual(
     prev.parentKeyId !== next.parentKeyId ||
     prev.control !== next.control ||
     prev.lookups !== next.lookups ||
+    prev.selectTypeaheadLoaders !== next.selectTypeaheadLoaders ||
     prev.submitAttempted !== next.submitAttempted ||
     prev.formId !== next.formId ||
     prev.onAddChildError !== next.onAddChildError ||
@@ -531,6 +541,7 @@ const ListParentCard = memo(function ListParentCard<
   control,
   trigger,
   lookups,
+  selectTypeaheadLoaders,
   queue,
   submitAttempted,
   parentLabel,
@@ -720,6 +731,7 @@ const ListParentCard = memo(function ListParentCard<
                         {...commonProps}
                         fieldDef={fieldDef}
                         lookups={lookups}
+                        typeaheadLoader={selectTypeaheadLoaders?.[fieldDef.key]}
                       />
                     ) : fieldDef.type === "number" ? (
                       <FormNumberField {...commonProps} fieldDef={fieldDef} />
@@ -930,6 +942,7 @@ export function ListToListManager<
   childFieldDefinitions,
   validationSchema,
   lookups,
+  selectTypeaheadLoaders,
   initialParents,
   isInitialDataResolved,
   isLoading,
@@ -1175,6 +1188,7 @@ export function ListToListManager<
           control={control}
           trigger={trigger}
           lookups={lookups}
+          selectTypeaheadLoaders={selectTypeaheadLoaders}
           queue={queue}
           submitAttempted={submitAttempted}
           parentLabel={parentLabel}
@@ -1197,7 +1211,23 @@ export function ListToListManager<
           isChildComplete={isChildComplete}
         />
       ))}
-
+      <div className="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+        <CButton
+          color="primary"
+          onClick={() => {
+            void handleAddParent();
+          }}
+        >
+          Add {parentLabel}
+        </CButton>
+        <OverallCounts
+          control={control}
+          parentKey={parentKey}
+          childKey={childKey}
+          parentPluralLabel={parentPluralLabel}
+          childPluralLabel={childPluralLabel}
+        />
+      </div>
       <SubmitActions
         control={control}
         onSubmit={() => {

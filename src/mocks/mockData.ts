@@ -1,4 +1,27 @@
 import type { Lookups, PersonRow } from "../features/personTodo/types";
+import type { LookupOption } from "../features/listToList/types";
+
+const PERSON_OBJECT_PREFIXES = [
+  "Employee",
+  "Contractor",
+  "Visitor",
+  "Partner",
+  "Vendor",
+];
+
+export const personObjectCatalog: LookupOption[] = Array.from(
+  { length: 500 },
+  (_, index) => {
+    const n = index + 1;
+    const prefix =
+      PERSON_OBJECT_PREFIXES[index % PERSON_OBJECT_PREFIXES.length];
+    const padded = String(n).padStart(4, "0");
+    return {
+      id: `person-object-${padded}`,
+      name: `${prefix} ${padded}`,
+    };
+  },
+);
 
 export const initialPersons: PersonRow[] = [
   {
@@ -12,11 +35,8 @@ export const initialPersons: PersonRow[] = [
 ];
 
 export const lookups: Lookups = {
-  personObjects: [
-    { id: "employee", name: "Employee" },
-    { id: "contractor", name: "Contractor" },
-    { id: "visitor", name: "Visitor" },
-  ],
+  // Kept for backward compatibility with existing forms.
+  personObjects: personObjectCatalog.slice(0, 20),
   sexes: [
     { id: "male", name: "Male" },
     { id: "female", name: "Female" },

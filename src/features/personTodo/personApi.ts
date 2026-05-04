@@ -1,5 +1,6 @@
 import { retry } from "@reduxjs/toolkit/query";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { LookupOption } from "../listToList/types";
 import type { Lookups, PersonRow, TodoRow } from "./types";
 
 const rawBaseQuery = fetchBaseQuery({
@@ -36,6 +37,16 @@ export const personApi = createApi({
       providesTags: (_result, _error, formId) => [
         { type: "Lookups", id: formId },
       ],
+    }),
+
+    searchPersonObjects: builder.query<
+      LookupOption[],
+      { formId: string; query: string }
+    >({
+      query: ({ formId, query }) => ({
+        url: `/forms/${formId}/person-objects`,
+        params: { query },
+      }),
     }),
 
     updatePersonField: builder.mutation<
@@ -147,6 +158,7 @@ export const {
   useGetFormIdsQuery,
   useGetPersonsQuery,
   useGetLookupsQuery,
+  useLazySearchPersonObjectsQuery,
   useUpdatePersonFieldMutation,
   useUpdateTodoFieldMutation,
   useAddPersonMutation,

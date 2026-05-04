@@ -5,6 +5,7 @@ import { store } from "./store/store";
 import App from "./App";
 
 import "@coreui/coreui/dist/css/coreui.min.css";
+import "@progress/kendo-theme-default/dist/all.css";
 import "./styles.css";
 
 function registerErrorTelemetryConsoleLogger() {

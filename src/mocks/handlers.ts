@@ -1,6 +1,6 @@
 import { delay, http, HttpResponse } from "msw";
 import type { PersonRow, TodoRow } from "../features/personTodo/types";
-import { lookups } from "./mockData";
+import { lookups, personObjectCatalog } from "./mockData";
 import {
   getPersistedFormIds,
   getPersistedPersons,
@@ -37,6 +37,22 @@ export const handlers = [
   http.get("/api/forms/:formId/lookups", async () => {
     await delay(50);
     return HttpResponse.json(clone(lookups));
+  }),
+
+  http.get("/api/forms/:formId/person-objects", async ({ request }) => {
+    await delay(120);
+    const url = new URL(request.url);
+    const query = url.searchParams.get("query")?.trim().toLowerCase() ?? "";
+
+    const filtered = query
+      ? personObjectCatalog.filter(
+          (option) =>
+            option.name.toLowerCase().includes(query) ||
+            option.id.toLowerCase().includes(query),
+        )
+      : personObjectCatalog;
+
+    return HttpResponse.json(filtered.slice(0, 50));
   }),
 
   http.post("/api/forms/:formId/persons", async ({ params }) => {
