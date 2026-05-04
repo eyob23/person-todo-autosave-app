@@ -266,6 +266,7 @@ type ListChildRowProps = {
   parentIndex: number;
   childIndex: number;
   fieldKey: string;
+  childKeyId: string;
   parentId: string;
   parentLabel: string;
   childLabel: string;
@@ -298,6 +299,7 @@ function areListChildRowPropsEqual(
     prev.parentIndex !== next.parentIndex ||
     prev.childIndex !== next.childIndex ||
     prev.fieldKey !== next.fieldKey ||
+    prev.childKeyId !== next.childKeyId ||
     prev.parentId !== next.parentId ||
     prev.control !== next.control ||
     prev.lookups !== next.lookups ||
@@ -322,6 +324,7 @@ const ListChildRow = memo(function ListChildRow({
   parentIndex,
   childIndex,
   fieldKey,
+  childKeyId,
   parentId,
   parentLabel,
   childLabel,
@@ -342,7 +345,9 @@ const ListChildRow = memo(function ListChildRow({
     control,
     name: `${parentKey}.${parentIndex}.${childKey}.${childIndex}` as never,
   }) as { id?: string } | undefined;
-  const childId = child?.id ?? "";
+  // useWatch can briefly return undefined right after append; fall back to
+  // field-array snapshot id so first edit still autosaves.
+  const childId = child?.id ?? childKeyId;
   const childFieldKey = childId || `p${parentIndex}-c${childIndex}`;
   const childLabelSuffix = `row ${childIndex + 1}${childId ? ` (id ${childId})` : ""}`;
 
@@ -794,6 +799,9 @@ const ListParentCard = memo(function ListParentCard<
                           parentIndex={parentIndex}
                           childIndex={childIndex}
                           fieldKey={childField.fieldKey}
+                          childKeyId={String(
+                            (childField as Record<string, unknown>).id ?? "",
+                          )}
                           parentId={parentId}
                           parentLabel={parentLabel}
                           childLabel={childLabel}

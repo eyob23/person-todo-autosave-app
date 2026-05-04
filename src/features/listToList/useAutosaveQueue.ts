@@ -81,8 +81,6 @@ export function useAutosaveQueue<TPayload = Record<string, unknown>>({
   const lastSavedChangesRef = useRef(
     new Map<string, Record<string, unknown>>(),
   );
-  const enqueueSequenceRef = useRef(0);
-  const lastAppliedEnqueueSequenceRef = useRef(0);
 
   // Kept in sync synchronously inside every setQueue functional updater so that
   // flushQueue and the processQueue while-loop always read up-to-date state
@@ -108,20 +106,7 @@ export function useAutosaveQueue<TPayload = Record<string, unknown>>({
   }, [queue]);
 
   const enqueue = useCallback((args: EnqueueArgs<TPayload>) => {
-    const enqueueSequence = ++enqueueSequenceRef.current;
     setQueue((current) => {
-      // In React StrictMode (dev), updater functions may be replayed.
-      // Keep enqueue idempotent per enqueue call to avoid duplicate queue items.
-      if (lastAppliedEnqueueSequenceRef.current === enqueueSequence) {
-        emitAutosaveTrace("queue:enqueue:replay-skip", {
-          enqueueSequence,
-          queueKey: args.queueKey,
-          changes: args.changes,
-        });
-        return current;
-      }
-      lastAppliedEnqueueSequenceRef.current = enqueueSequence;
-
       const existingIndex = current.findIndex(
         (x) => x.queueKey === args.queueKey,
       );

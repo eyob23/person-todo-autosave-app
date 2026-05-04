@@ -177,6 +177,15 @@ describe("User Interactions", () => {
 
       waitForSaved();
     });
+
+    it("saves the first numeric edit after adding a new todo", () => {
+      addTodo(formId, 0);
+
+      // Regression: first edit on a newly added row must enqueue and save.
+      cy.get('input[aria-label*="Completed count"]').first().clear().type("1");
+
+      waitForSaved();
+    });
   });
 
   // ── Submit ────────────────────────────────────────────────────────────────

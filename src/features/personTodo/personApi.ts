@@ -52,7 +52,7 @@ export const personApi = createApi({
         body: changes,
       }),
       // Prevent retry middleware from issuing duplicate PATCH requests.
-      extraOptions: { maxRetries: 0 },
+      //extraOptions: { maxRetries: 0 },
     }),
 
     updateTodoField: builder.mutation<
@@ -70,7 +70,7 @@ export const personApi = createApi({
         body: changes,
       }),
       // Prevent retry middleware from issuing duplicate PATCH requests.
-      extraOptions: { maxRetries: 0 },
+      //extraOptions: { maxRetries: 0 },
     }),
 
     addPerson: builder.mutation<PersonRow, { formId: string }>({
