@@ -41,7 +41,6 @@ import { RequiredCounter } from "./RequiredCounter";
 import type {
   FieldDefinition,
   LookupCollection,
-  LookupOption,
   QueueItem,
   RequiredProgress,
 } from "./types";
@@ -75,10 +74,6 @@ type ListToListManagerProps<
   childFieldDefinitions: FieldDefinition[];
   validationSchema: unknown;
   lookups?: LookupCollection;
-  selectTypeaheadLoaders?: Record<
-    string,
-    (query: string) => Promise<LookupOption[]>
-  >;
   initialParents: TParent[];
   isInitialDataResolved: boolean;
   isLoading: boolean;
@@ -278,6 +273,7 @@ type ListChildRowProps = {
   parentKey: string;
   childKey: string;
   childEntityQueueKey: string;
+  formId: string;
   control: Control<any>;
   lookups?: LookupCollection;
   queue: QueueItem[];
@@ -306,6 +302,7 @@ function areListChildRowPropsEqual(
     prev.fieldKey !== next.fieldKey ||
     prev.childKeyId !== next.childKeyId ||
     prev.parentId !== next.parentId ||
+    prev.formId !== next.formId ||
     prev.control !== next.control ||
     prev.lookups !== next.lookups ||
     prev.submitAttempted !== next.submitAttempted ||
@@ -336,6 +333,7 @@ const ListChildRow = memo(function ListChildRow({
   parentKey,
   childKey,
   childEntityQueueKey,
+  formId,
   control,
   lookups,
   queue,
@@ -386,6 +384,7 @@ const ListChildRow = memo(function ListChildRow({
               <FormSelectField
                 {...commonProps}
                 fieldDef={fieldDef}
+                formId={formId}
                 lookups={lookups}
               />
             </td>
@@ -457,10 +456,6 @@ type ListParentCardProps<
   control: Control<any>;
   trigger: UseFormTrigger<any>;
   lookups?: LookupCollection;
-  selectTypeaheadLoaders?: Record<
-    string,
-    (query: string) => Promise<LookupOption[]>
-  >;
   queue: QueueItem[];
   submitAttempted: boolean;
   parentLabel: string;
@@ -507,7 +502,6 @@ function areParentCardPropsEqual(
     prev.parentKeyId !== next.parentKeyId ||
     prev.control !== next.control ||
     prev.lookups !== next.lookups ||
-    prev.selectTypeaheadLoaders !== next.selectTypeaheadLoaders ||
     prev.submitAttempted !== next.submitAttempted ||
     prev.formId !== next.formId ||
     prev.onAddChildError !== next.onAddChildError ||
@@ -541,7 +535,6 @@ const ListParentCard = memo(function ListParentCard<
   control,
   trigger,
   lookups,
-  selectTypeaheadLoaders,
   queue,
   submitAttempted,
   parentLabel,
@@ -730,8 +723,8 @@ const ListParentCard = memo(function ListParentCard<
                       <FormSelectField
                         {...commonProps}
                         fieldDef={fieldDef}
+                        formId={formId}
                         lookups={lookups}
-                        typeaheadLoader={selectTypeaheadLoaders?.[fieldDef.key]}
                       />
                     ) : fieldDef.type === "number" ? (
                       <FormNumberField {...commonProps} fieldDef={fieldDef} />
@@ -820,6 +813,7 @@ const ListParentCard = memo(function ListParentCard<
                           parentKey={parentKey}
                           childKey={childKey}
                           childEntityQueueKey={childEntityQueueKey}
+                          formId={formId}
                           control={control}
                           lookups={lookups}
                           queue={queue}
@@ -942,7 +936,6 @@ export function ListToListManager<
   childFieldDefinitions,
   validationSchema,
   lookups,
-  selectTypeaheadLoaders,
   initialParents,
   isInitialDataResolved,
   isLoading,
@@ -1188,7 +1181,6 @@ export function ListToListManager<
           control={control}
           trigger={trigger}
           lookups={lookups}
-          selectTypeaheadLoaders={selectTypeaheadLoaders}
           queue={queue}
           submitAttempted={submitAttempted}
           parentLabel={parentLabel}

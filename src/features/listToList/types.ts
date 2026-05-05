@@ -4,6 +4,7 @@
 export type LookupOption = {
   id: string;
   name: string;
+  description?: string;
 };
 
 export type LookupCollection<TLookupKey extends string = string> = Record<

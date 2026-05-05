@@ -1,6 +1,12 @@
 export type { LookupOption, RequiredProgress } from "../listToList/types";
 import type { LookupOption } from "../listToList/types";
 
+export type PersonObjectSelection = {
+  id: string;
+  name: string;
+  description?: string;
+};
+
 export type TodoRow = {
   id: string;
   personId: string;
@@ -12,7 +18,7 @@ export type TodoRow = {
 
 export type PersonRow = {
   id: string;
-  personObjectPickId: string | null;
+  personObjectPickId: PersonObjectSelection | null;
   sexId: string | null;
   genderId: string | null;
   rowVersion?: string;

@@ -6,7 +6,6 @@ import {
   useDeleteTodoMutation,
   useGetLookupsQuery,
   useGetPersonsQuery,
-  useLazySearchPersonObjectsQuery,
   useSubmitPersonsMutation,
   useUpdatePersonFieldMutation,
   useUpdateTodoFieldMutation,
@@ -63,7 +62,6 @@ export default function PersonTodoManagerJson({ id }: Props) {
   const [addTodo] = useAddTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
   const [submitPersons] = useSubmitPersonsMutation();
-  const [searchPersonObjects] = useLazySearchPersonObjectsQuery();
 
   const isOnline = useOnlineStatus();
 
@@ -167,13 +165,6 @@ export default function PersonTodoManagerJson({ id }: Props) {
     [flushQueue, id, submitPersons],
   );
 
-  const loadPersonObjectOptions = useCallback(
-    async (query: string) => {
-      return searchPersonObjects({ formId: id, query }).unwrap();
-    },
-    [id, searchPersonObjects],
-  );
-
   return (
     <ListToListManager<PersonRow, TodoRow>
       formId={id}
@@ -192,9 +183,6 @@ export default function PersonTodoManagerJson({ id }: Props) {
       childFieldDefinitions={todoFieldDefinitions}
       validationSchema={formSchema}
       lookups={lookups}
-      selectTypeaheadLoaders={{
-        personObjectPickId: loadPersonObjectOptions,
-      }}
       initialParents={persons}
       isInitialDataResolved={isInitialDataResolved}
       isLoading={isLoading}

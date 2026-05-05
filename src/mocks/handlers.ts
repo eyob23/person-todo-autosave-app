@@ -48,7 +48,8 @@ export const handlers = [
       ? personObjectCatalog.filter(
           (option) =>
             option.name.toLowerCase().includes(query) ||
-            option.id.toLowerCase().includes(query),
+            option.id.toLowerCase().includes(query) ||
+            option.description?.toLowerCase().includes(query),
         )
       : personObjectCatalog;
 

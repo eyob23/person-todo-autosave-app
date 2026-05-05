@@ -44,7 +44,14 @@ export const todoSchema = yup.object({
 
 export const personSchema = yup.object({
   id: yup.string().required(),
-  personObjectPickId: yup.string().required("Person object is required"),
+  personObjectPickId: yup
+    .object({
+      id: yup.string().required("Person object id is required"),
+      name: yup.string().required("Person object name is required"),
+      description: yup.string().optional(),
+    })
+    .nullable()
+    .required("Person object is required"),
   sexId: yup.string().required("Sex is required"),
   genderId: yup.string().required("Gender is required"),
   todos: yup.array().of(todoSchema).min(1, "At least one todo is required"),

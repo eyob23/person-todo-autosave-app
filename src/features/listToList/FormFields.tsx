@@ -1,6 +1,5 @@
 import { CFormInput, CFormSelect } from "@coreui/react";
-import { ComboBox } from "@progress/kendo-react-dropdowns";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   useController,
   type Control,
@@ -9,6 +8,7 @@ import {
 } from "react-hook-form";
 import { FieldSaveStatus } from "./FieldSaveStatus";
 import { emitAutosaveTrace } from "./autosaveTrace";
+import { PersonObjectPicker } from "./PersonObjectPicker";
 import type {
   LookupOption,
   LookupCollection,
@@ -57,8 +57,8 @@ type CommonFieldProps<TFieldValues extends FieldValues = FieldValues> = {
 type FormSelectFieldProps<TFieldValues extends FieldValues = FieldValues> =
   CommonFieldProps<TFieldValues> & {
     fieldDef: SelectFieldDefinition;
+    formId?: string;
     lookups?: LookupCollection;
-    typeaheadLoader?: (query: string) => Promise<LookupOption[]>;
   };
 
 export function FormSelectField<
@@ -73,80 +73,37 @@ export function FormSelectField<
   submitAttempted,
   onAutosave,
   fieldDef,
+  formId,
   lookups,
-  typeaheadLoader,
 }: FormSelectFieldProps<TFieldValues>) {
   const { field, fieldState } = useController({ control, name });
   const errorId = `${inputId}-error`;
   const shouldEmitAutosave = useAutosaveEmissionGuard(field.value);
   const options = (lookups?.[fieldDef.lookupKey] ?? []) as LookupOption[];
-  const isPersonObjectTypeAhead =
-    fieldDef.key === "personObjectPickId" && !!typeaheadLoader;
-  const [remoteOptions, setRemoteOptions] = useState<LookupOption[]>([]);
-  const [queryText, setQueryText] = useState("");
-  const [isLoadingRemoteOptions, setIsLoadingRemoteOptions] = useState(false);
-  const requestSequenceRef = useRef(0);
 
-  useEffect(() => {
-    if (!isPersonObjectTypeAhead || !typeaheadLoader) {
-      return;
-    }
+  const isPersonObjectPickerField = fieldDef.key === "personObjectPickId";
 
-    const sequence = ++requestSequenceRef.current;
-    const timer = window.setTimeout(async () => {
-      setIsLoadingRemoteOptions(true);
-      try {
-        const nextOptions = await typeaheadLoader(queryText.trim());
-        if (requestSequenceRef.current === sequence) {
-          setRemoteOptions(nextOptions);
-        }
-      } finally {
-        if (requestSequenceRef.current === sequence) {
-          setIsLoadingRemoteOptions(false);
-        }
-      }
-    }, 250);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [isPersonObjectTypeAhead, queryText, typeaheadLoader]);
-
-  if (isPersonObjectTypeAhead) {
+  if (isPersonObjectPickerField && formId) {
+    const rawValue = field.value as LookupOption | string | null | undefined;
     const selectedOption =
-      remoteOptions.find((option) => option.id === field.value) ?? null;
+      typeof rawValue === "string"
+        ? (options.find((option) => option.id === rawValue) ?? null)
+        : (rawValue ?? null);
 
     return (
       <>
-        <ComboBox
-          id={inputId}
+        <PersonObjectPicker
+          inputId={inputId}
           name={field.name}
-          data={remoteOptions}
-          textField="name"
-          dataItemKey="id"
-          value={selectedOption}
-          placeholder={fieldDef.placeholder}
-          suggest
-          filterable
-          loading={isLoadingRemoteOptions}
+          formId={formId}
           ariaLabel={ariaLabel}
           ariaDescribedBy={
             submitAttempted && fieldState.error ? errorId : undefined
           }
+          value={selectedOption}
+          placeholder={fieldDef.placeholder}
           onBlur={field.onBlur}
-          onFilterChange={(event) => {
-            setQueryText(event.filter.value ?? "");
-          }}
-          onChange={(event) => {
-            const nextRawValue = event.value as LookupOption | string | null;
-
-            // While typing for filtering, Kendo can emit text values.
-            // Persist only when a concrete option is selected or cleared.
-            if (typeof nextRawValue === "string") {
-              return;
-            }
-
-            const nextValue = nextRawValue?.id ?? null;
+          onChange={(nextValue) => {
             field.onChange(nextValue);
 
             const emitted = shouldEmitAutosave(nextValue);

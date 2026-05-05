@@ -19,6 +19,7 @@ export const personObjectCatalog: LookupOption[] = Array.from(
     return {
       id: `person-object-${padded}`,
       name: `${prefix} ${padded}`,
+      description: `${prefix} profile ${padded}`,
     };
   },
 );
@@ -38,19 +39,43 @@ export const lookups: Lookups = {
   // Kept for backward compatibility with existing forms.
   personObjects: personObjectCatalog.slice(0, 20),
   sexes: [
-    { id: "male", name: "Male" },
-    { id: "female", name: "Female" },
-    { id: "unknown", name: "Unknown" },
+    { id: "male", name: "Male", description: "Male sex option" },
+    { id: "female", name: "Female", description: "Female sex option" },
+    {
+      id: "unknown",
+      name: "Unknown",
+      description: "Sex not known or not specified",
+    },
   ],
   genders: [
-    { id: "man", name: "Man" },
-    { id: "woman", name: "Woman" },
-    { id: "nonbinary", name: "Non-binary" },
-    { id: "prefer-not-to-say", name: "Prefer not to say" },
+    { id: "man", name: "Man", description: "Gender identity: man" },
+    { id: "woman", name: "Woman", description: "Gender identity: woman" },
+    {
+      id: "nonbinary",
+      name: "Non-binary",
+      description: "Gender identity: non-binary",
+    },
+    {
+      id: "prefer-not-to-say",
+      name: "Prefer not to say",
+      description: "Gender identity intentionally not shared",
+    },
   ],
   todoTypes: [
-    { id: "training", name: "Training" },
-    { id: "review", name: "Review" },
-    { id: "follow-up", name: "Follow-up" },
+    {
+      id: "training",
+      name: "Training",
+      description: "Training-related todo item",
+    },
+    {
+      id: "review",
+      name: "Review",
+      description: "Review-related todo item",
+    },
+    {
+      id: "follow-up",
+      name: "Follow-up",
+      description: "Follow-up todo item",
+    },
   ],
 };
